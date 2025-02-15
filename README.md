@@ -170,7 +170,7 @@ Edit
 tmux new -s ngrok
 ngrok http 8000 --basic-auth="your_username:your_password"
 
-## 🚀 Copy the ngrok URL, e.g., https://random-ngrok-url.ngrok.io, and use it for API requests.
+🚀 Copy the ngrok URL, e.g., https://random-ngrok-url.ngrok.io, and use it for API requests.
 
 ## 🧪 API Testing
 ### 1️⃣ Test REST API
