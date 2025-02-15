@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+praw
+pydantic
+dotenv
+httpx
+websockets
