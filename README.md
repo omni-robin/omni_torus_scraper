@@ -1,5 +1,12 @@
 # **Usage Guide for Torus Reddit Scraper API**
 
+Please keep in mind that this is being developed actively, and will change.
+This version only handles the scrape and subscribe part.
+Code to add the scraped information to the Torus knowledge organ will soon be added.
+
+Current rate limits are set to 100 posts / minute on the hosted version.
+Please contact OmniLabs in any of the official Torus channels to get an auth token to use the OmniLabs hosted API.
+
 ## **Overview**
 This guide explains how to use the **Reddit Scraper API**, which provides **real-time and on-demand Reddit data** via **REST API and WebSocket**. The API is accessible at **https://api.omni-torus.ngrok.app** and allows both **ad hoc scraping** and **live subscription** to Reddit posts based on filters.
 
