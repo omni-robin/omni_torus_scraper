@@ -2,6 +2,6 @@ fastapi
 uvicorn
 praw
 pydantic
-dotenv
+python-dotenv
 httpx
 websockets
