@@ -18,11 +18,18 @@ Replace the Reddit API credentials with your own credentials before deployment.
 import asyncio
 import threading
 import logging
+import os
 from typing import Optional, List, Dict, Any
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 import praw
+from dotenv import load_dotenv
+
+# ----------------------------------------------------------------------
+# Load Environment Variables
+# ----------------------------------------------------------------------
+load_dotenv()
 
 # ----------------------------------------------------------------------
 # Logging Configuration
@@ -36,9 +43,9 @@ logger = logging.getLogger(__name__)
 # ----------------------------------------------------------------------
 # Reddit API Configuration (Replace with your credentials)
 # ----------------------------------------------------------------------
-REDDIT_CLIENT_ID = ":::Client ID:::"
-REDDIT_CLIENT_SECRET = "::Client Secret:::"
-USER_AGENT = "torus_info"
+REDDIT_CLIENT_ID = os.getenv("REDDIT_CLIENT_ID")
+REDDIT_CLIENT_SECRET = os.getenv("REDDIT_CLIENT_SECRET")
+USER_AGENT = os.getenv("USER_AGENT")
 
 # Do not initialize reddit here.
 reddit = None
