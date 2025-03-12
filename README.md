@@ -1,228 +1,222 @@
-# **Usage Guide for Torus Reddit Scraper API**
+Torus Reddit Scraper API 🚀
 
-Please keep in mind that this is being developed actively, and will change.
-This version only handles the scrape and subscribe part.
-Code to add the scraped information to the Torus knowledge organ will soon be added.
+A FastAPI-based Reddit Scraper that provides real-time and on-demand Reddit data via REST API and WebSocket. This API integrates with the Torus Memory Organ to store scraped posts (signed using a Polkadot wallet) by default. You can disable saving on a per-request basis using the do_not_save parameter.
 
-Current rate limits are set to 100 posts / minute on the hosted version.
-Please contact OmniLabs in any of the official Torus channels to get an auth token to use the OmniLabs hosted API.
+	Note: All sensitive configuration (Reddit credentials, Polkadot wallet seed, Torus Memory URL) is loaded from a .env file.
 
-## **Overview**
-This guide explains how to use the **Reddit Scraper API**, which provides **real-time and on-demand Reddit data** via **REST API and WebSocket**. The API is accessible at **https://api.omni-torus.ngrok.app** and allows both **ad hoc scraping** and **live subscription** to Reddit posts based on filters.
+⸻
 
----
+Overview
 
-## **1️⃣ REST API (Ad Hoc Scraping)**
+The Torus Reddit Scraper API offers two primary interfaces:
+	1.	REST API (/scrape):
+Perform one-time scraping of Reddit posts with support for filtering by subreddits, keywords, score, NSFW flag, post type, flair, and optional comment retrieval. By default, scraped posts are also sent to the Torus Memory Organ.
+	2.	WebSocket API (/ws/subscribe):
+Subscribe to a live stream of Reddit posts that match specified filters. New posts are pushed in real time to connected clients and also stored in the Torus Memory Organ unless the client opts out.
 
-The `/scrape` endpoint allows users to request Reddit posts on demand based on various filters.
+⸻
 
-### **🔹 Endpoint:**
-```http
-GET https://api.omni-torus.ngrok.app/scrape
-```
+Features
+	•	On-Demand Scraping: Fetch posts using customizable filters.
+	•	Real-Time Streaming: Subscribe via WebSocket for live updates.
+	•	Torus Memory Organ Integration: Automatically store scraped posts with cryptographic signing using your Polkadot wallet.
+	•	Opt-Out Saving: Use the do_not_save flag if you only need transient data.
+	•	Configuration via .env: All credentials and endpoints are loaded securely from a .env file.
+	•	Easy Deployment: Host with uvicorn and use tools like tmux or ngrok for production readiness.
 
-### **🔹 Parameters:**
-| Parameter      | Type   | Description |
-|--------------|--------|-------------|
-| `subreddits` | List[str] | List of subreddits to filter (e.g., `technology`, `ai`) |
-| `keywords`   | List[str] | Keywords to search for in the title and content |
-| `min_score`  | int    | Minimum upvotes required |
-| `include_nsfw` | bool  | Whether to include NSFW posts (default: `false`) |
-| `is_self`    | bool   | `true` for text posts, `false` for link posts, `null` for both |
-| `flair`      | List[str] | List of allowed post flairs (case-insensitive) |
-| `fetch_comments` | bool  | Whether to retrieve top-level comments (default: `false`) |
-| `comments_limit` | int  | Number of top-level comments to fetch per post (default: `5`) |
-| `sort_by`    | str    | Sorting method: `hot`, `new`, `top`, or `rising` |
-| `limit`      | int    | Number of posts to retrieve (default: `10`) |
+⸻
 
-### **🔹 Example Request:**
-```bash
-curl -u your_username:your_password "https://api.omni-torus.ngrok.app/scrape?subreddits=technology&keywords=AI&limit=3"
-```
+Installation & Setup
 
-### **🔹 Example Response:**
-```json
-{
-    "posts": [
-        {"id": "xyz", "title": "AI in 2024", "url": "https://reddit.com/r/technology/xyz"}
-    ]
-}
-```
+1️⃣ Clone the Repository
 
----
-
-## **2️⃣ WebSocket API (Real-Time Subscription)**
-
-The WebSocket API allows **real-time monitoring** of new Reddit posts matching specified filters.
-
-### **🔹 Endpoint:**
-```http
-wss://api.omni-torus.ngrok.app/ws/subscribe
-```
-
-### **🔹 How to Connect:**
-Using **wscat**:
-```bash
-wscat -c wss://api.omni-torus.ngrok.app/ws/subscribe -H "Authorization: Basic $(echo -n 'your_username:your_password' | base64)"
-```
-
-### **🔹 Subscription Request Format:**
-After connecting to the WebSocket, send a JSON payload to **subscribe** to specific Reddit posts:
-```json
-{
-    "subreddits": ["technology"],
-    "keywords": ["AI"],
-    "min_score": 5,
-    "fetch_comments": true,
-    "comments_limit": 5
-}
-```
-
-### **🔹 Example Response (New Post Matches Subscription Criteria):**
-```json
-{
-    "id": "abc123",
-    "title": "Breakthrough in AI",
-    "selftext": "A new AI model surpasses GPT-4.",
-    "url": "https://reddit.com/r/technology/abc123",
-    "score": 120,
-    "subreddit": "technology",
-    "flair": "AI",
-    "num_comments": 15,
-    "comments": [
-        "This is amazing!",
-        "What about ethical concerns?"
-    ]
-}
-```
-
----
-
-## **3️⃣ Managing Subscriptions**
-
-- **To receive real-time updates**, stay connected to the WebSocket.
-- **To stop receiving updates**, close the WebSocket connection.
-- **To modify subscription filters**, disconnect and reconnect with a new request payload.
-
----
-
-## **✅ Do it!**
-The **Torus Reddit Scraper API** provides both **on-demand queries** via REST and **real-time subscriptions** via WebSocket. Use the appropriate method based on your needs.
-
----
-
-
-# Self host Torus Reddit Scraper API 🚀
-A FastAPI-based Reddit Scraper that provides real-time and on-demand Reddit data via REST API & WebSocket. This project is hosted on Azure, secured via ngrok with Basic Authentication, and designed for enterprise-level deployment.
-
-## 📌 Features
-🔹 FastAPI-based API for high-performance Reddit data scraping.
-🔹 REST & WebSocket support for real-time & batch processing.
-🔹 Authentication via ngrok Basic Auth (no need to modify FastAPI code).
-🔹 Deployable on Azure VM with venv & tmux for stability.
-🔹 Supports subreddit filtering, keyword matching, and comment extraction.
-🔹 Runs in the background using tmux (persistent across SSH logouts).
-
-## 🛠️ Installation & Setup
-### 1️⃣ Clone the Repository
-bash
-Copy
-Edit
 git clone https://github.com/your-username/reddit-scraper-api.git
 cd reddit-scraper-api
 
-### 2️⃣ Setup Virtual Environment
-bash
-Copy
-Edit
+2️⃣ Set Up a Virtual Environment
+
 python3 -m venv venv
 source venv/bin/activate
 
-### 3️⃣ Install Dependencies
-bash
-Copy
-Edit
+3️⃣ Install Dependencies
+
 pip install -r requirements.txt
 
-### 4️⃣ Create a .env File
-bash
-Copy
-Edit
-nano .env
-Add your Reddit API credentials:
+Ensure you have installed packages such as FastAPI, uvicorn, praw, python-dotenv, and requests.
 
-ini
-Copy
-Edit
-REDDIT_CLIENT_ID=your_client_id
-REDDIT_CLIENT_SECRET=your_client_secret
-USER_AGENT=your_user_agent
-Save & exit (Ctrl + X, then Y, then Enter).
+4️⃣ Create a .env File
 
-### 5️⃣ Start FastAPI Server
-bash
-Copy
-Edit
-tmux new -s fastapi
-source venv/bin/activate
-uvicorn reddit_scraper_api:app --host 0.0.0.0 --port 4444 --reload
-Detach from tmux: Ctrl + B, then D
+In the project root, create a file named .env with the following content:
 
-## 🌎 Exposing API via ngrok
-Run ngrok with Basic Authentication:
+# Reddit API Credentials
+REDDIT_CLIENT_ID=your_reddit_client_id
+REDDIT_CLIENT_SECRET=your_reddit_client_secret
+USER_AGENT=your_custom_user_agent
 
-bash
-Copy
-Edit
+# Polkadot Wallet Seed (for signing data)
+POLKADOT_WALLET_SEED=your_polkadot_wallet_seed
+
+# Torus Memory Organ URL (to save scraped posts)
+TORUS_MEMORY_URL=https://your-torus-organ/api/memories/create
+
+	•	Reddit Credentials: Obtain these by creating a Reddit app.
+	•	Polkadot Wallet Seed: Used to sign posts for authenticity.
+	•	Torus Memory URL: The endpoint for saving posts. If this is not set, posts will not be stored.
+
+5️⃣ Start the FastAPI Server
+
+Run the application using uvicorn:
+
+python reddit_scraper_api.py
+
+This starts the API on 0.0.0.0:8000 with auto-reload enabled (for development).
+
+⸻
+
+API Usage
+
+1️⃣ REST API (Ad Hoc Scraping)
+
+Endpoint:
+
+GET /scrape
+
+(For hosted deployments, prefix with your base URL, e.g., https://api.omni-torus.ngrok.app/scrape.)
+
+Query Parameters:
+
+Parameter	Type	Description
+subreddits	List[str]	Subreddits to scrape (e.g., technology,news). Defaults to all if omitted.
+keywords	List[str]	Keywords to filter posts (searched in title and body).
+min_score	int	Minimum upvote score required.
+include_nsfw	bool	Whether to include NSFW posts (default: true).
+is_self	bool or null	true for text posts only, false for link posts only, or omitted for both.
+flair	List[str]	Allowed post flairs (case-insensitive).
+fetch_comments	bool	Whether to retrieve top-level comments (default: false).
+comments_limit	int	Number of comments per post if enabled (default: 5).
+sort_by	str	Sorting method: hot, new, top, or rising (default: hot).
+limit	int	Number of posts to retrieve (default: 10).
+do_not_save	bool	If true, do not save the scraped data to Torus (default: false).
+
+Example Request:
+
+curl -u your_username:your_password "https://api.omni-torus.ngrok.app/scrape?subreddits=technology&keywords=AI&limit=3&do_not_save=true"
+
+Example Response:
+
+{
+    "posts": [
+        {
+            "id": "abc123",
+            "title": "AI in 2024",
+            "selftext": "OpenAI announces a new breakthrough...",
+            "url": "https://reddit.com/r/technology/abc123",
+            "score": 150,
+            "subreddit": "technology",
+            "flair": "News",
+            "num_comments": 42,
+            "comments": [
+                "Amazing development!",
+                "What about ethical implications?"
+            ]
+        }
+    ]
+}
+
+Posts will be saved to the Torus Memory Organ by default unless do_not_save=true is specified.
+
+⸻
+
+2️⃣ WebSocket API (Real-Time Subscription)
+
+Endpoint:
+
+GET /ws/subscribe
+
+(For hosted deployments: wss://api.omni-torus.ngrok.app/ws/subscribe)
+
+How to Connect:
+
+Using wscat:
+
+wscat -c wss://api.omni-torus.ngrok.app/ws/subscribe -H "Authorization: Basic $(echo -n 'your_username:your_password' | base64)"
+
+Subscription Request Format:
+
+Send a JSON message after connecting:
+
+{
+    "subreddits": ["technology", "AI"],
+    "keywords": ["OpenAI", "GPT-4"],
+    "min_score": 10,
+    "fetch_comments": true,
+    "comments_limit": 5,
+    "do_not_save": false
+}
+
+	•	do_not_save: Set to true if you wish to disable storing matching posts to Torus.
+	•	Other fields are optional and allow you to filter incoming posts.
+
+Example Notification:
+
+Once subscribed, you will receive JSON messages like:
+
+{
+    "id": "xyz789",
+    "title": "Breakthrough in AI",
+    "selftext": "A new AI model surpasses GPT-4...",
+    "url": "https://reddit.com/r/technology/xyz789",
+    "score": 120,
+    "subreddit": "technology",
+    "flair": "Discussion",
+    "num_comments": 15,
+    "comments": [
+        "This is amazing!",
+        "What about its impact on jobs?"
+    ]
+}
+
+Each new post that meets your criteria is pushed to your client and saved to Torus unless opted out.
+
+⸻
+
+Deployment & Best Practices
+
+Running the App:
+
+For local development or production testing, you can run:
+
+python reddit_scraper_api.py
+
+This starts uvicorn on port 8000. In production, consider using process managers (e.g., Gunicorn or Docker) and tools like tmux to keep the server running.
+
+Exposing the API:
+
+To expose your local API for external testing, use ngrok:
+
 tmux new -s ngrok
 ngrok http 8000 --basic-auth="your_username:your_password"
 
-🚀 Copy the ngrok URL, e.g., https://random-ngrok-url.ngrok.io, and use it for API requests.
+Copy the generated ngrok URL and update your client requests accordingly.
 
-## 🧪 API Testing
-### 1️⃣ Test REST API
-bash
-Copy
-Edit
-curl -u your_username:your_password "https://random-ngrok-url.ngrok.io/scrape?subreddits=technology&keywords=AI&limit=3"
+Security Considerations:
+	•	Keep your .env file secure: Do not commit it to version control.
+	•	Authentication: For hosted deployments, use Basic Auth (or another secure method) to protect your API endpoints.
+	•	Logging: Monitor logs for any errors, especially for external API calls and Torus Memory Organ submissions.
 
-### 2️⃣ Test WebSocket API
-Install wscat:
+Future Improvements:
+	•	Add actual integration with a Polkadot wallet library (instead of simulated signing).
+	•	Implement enhanced error handling and automatic retries for external API calls.
+	•	Containerize the application using Docker for easier deployment.
+	•	Consider adding OAuth2/JWT authentication for increased security.
 
-bash
-Copy
-Edit
-npm install -g wscat
-Connect to WebSocket:
+⸻
 
-bash
-Copy
-Edit
-wscat -c wss://random-ngrok-url.ngrok.io/ws/subscribe
+License
 
-## 🛠️ Deployment & Auto-Start on Reboot
-To keep the API running even after reboot, add this to crontab:
-
-bash
-Copy
-Edit
-crontab -e
-Add:
-
-less
-Copy
-Edit
-@reboot tmux new -d -s fastapi 'cd ~/reddit_scraper && source venv/bin/activate && uvicorn reddit_scraper_api:app --host 0.0.0.0 --port 8000 --reload'
-@reboot tmux new -d -s ngrok 'ngrok http 8000 --basic-auth="your_username:your_password"'
-
-## 📄 License
 This project is open-source under the MIT License.
 
-## 👨‍💻 Contributors
-@omni-robin - Creator & Maintainer
+⸻
 
-## 🚀 Future Improvements
-✅ OAuth2/JWT-based authentication (instead of ngrok Basic Auth)
-✅ Caching layer (Redis) for frequent queries
-✅ Dockerized deployment for easy scaling
-
+Contributors
+	•	@omni-robin – Creator & Maintainer
